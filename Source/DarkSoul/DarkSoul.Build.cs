@@ -12,7 +12,7 @@ public class DarkSoul : ModuleRules
 
         PublicIncludePaths.Add(ModuleDirectory);
 
-        // Uncomment if you are using Slate UI
+        // Uncomment if you are not using Slate UI
          PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore"});
 
         // Uncomment if you are using online features

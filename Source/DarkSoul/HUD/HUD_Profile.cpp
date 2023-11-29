@@ -11,28 +11,50 @@ void UHUD_Profile::NativeOnInitialized()
 
 	Super::NativeOnInitialized();
 
-	CheckNull(BlankImage);
-	WeaponIcon->SetBrushFromTexture(BlankImage);
-	Skill01Icon->SetBrushFromTexture(BlankImage);
-	Skill02Icon->SetBrushFromTexture(BlankImage);
-	Skill03Icon->SetBrushFromTexture(BlankImage);
+	if (BlankImage)
+	{
+		WeaponIcon->SetBrushFromTexture(BlankImage);
 
-	SkillIcons.Add(Skill01Icon);
-	SkillIcons.Add(Skill02Icon);
-	SkillIcons.Add(Skill03Icon);
+		Skill01Icon->SetBrushFromTexture(BlankImage);
+		SkillIcons.Add(Skill01Icon);
 
-	CheckNull(SkillIconBorderImage);
-	BorderImage00->SetBrushFromTexture(SkillIconBorderImage);
-	BorderImage01->SetBrushFromTexture(SkillIconBorderImage);
-	BorderImage02->SetBrushFromTexture(SkillIconBorderImage);
-	BorderImage03->SetBrushFromTexture(SkillIconBorderImage);
+		Skill02Icon->SetBrushFromTexture(BlankImage);
+		SkillIcons.Add(Skill02Icon);
+
+		Skill03Icon->SetBrushFromTexture(BlankImage);
+		SkillIcons.Add(Skill03Icon);
+	}
+	else
+	{
+		PrintLine();
+	}
+
+
+	if (SkillIconBorderImage)
+	{
+		BorderImage00->SetBrushFromTexture(SkillIconBorderImage);
+		BorderImage01->SetBrushFromTexture(SkillIconBorderImage);
+		BorderImage02->SetBrushFromTexture(SkillIconBorderImage);
+		BorderImage03->SetBrushFromTexture(SkillIconBorderImage);
+	}
+	else
+	{
+		PrintLine();
+	}
 
 }
 
 void UHUD_Profile::SetHealthBar(float InFloat1, float InFloat2)
 {
-	CheckNull(HealthBar);
-	HealthBar->SetPercent(InFloat2 / InFloat1);
+	if (HealthBar)
+	{
+		HealthBar->SetPercent(InFloat2 / InFloat1);
+	}
+	else
+	{
+		PrintLine();
+		return;
+	}
 }
 
 void UHUD_Profile::SetManaBar(float InFloat1, float InFloat2)
@@ -47,25 +69,41 @@ void UHUD_Profile::SetStaminaBar(float InFloat1, float InFloat2)
 	StaminaBar->SetPercent(InFloat2 / InFloat1);
 }
 
-void UHUD_Profile::SetRadarVisibility()
-{
-	CheckNull(Radar);
-	Radar->SetRadarVisibility();
-}
+// [23-11-29] : Test
+//void UHUD_Profile::SetRadarVisibility()
+//{
+//	CheckNull(Radar);
+//	Radar->SetRadarVisibility();
+//}
 
 void UHUD_Profile::SetWeaponIcon(UTexture2D* InTexture)
 {
-	FSlateBrush Brush;
-	Brush.SetResourceObject(InTexture);
+	//FSlateBrush Brush;
+	//Brush.SetResourceObject(InTexture);
 
-	CheckNull(WeaponIcon);
-	WeaponIcon->SetBrush(Brush);
+	if (WeaponIcon)
+	{
+		WeaponIcon->SetBrushFromTexture(InTexture);
+	}
+	else
+	{
+		PrintLine();
+		return;
+	}
+
 }
 
 void UHUD_Profile::SetSkill01Icon(UTexture2D* InTexture)
 {
-	CheckNull(Skill01Icon);
-	Skill01Icon->SetBrushFromTexture(InTexture);
+	if (Skill01Icon)
+	{
+		Skill01Icon->SetBrushFromTexture(InTexture);
+	}
+	else
+	{
+		PrintLine();
+		return;
+	}
 }
 
 void UHUD_Profile::SetSkill02Icon(UTexture2D* InTexture)

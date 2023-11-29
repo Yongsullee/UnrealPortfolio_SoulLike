@@ -27,9 +27,9 @@ private:
 	UFUNCTION()
 		void UpdateHUDProfileStaminaBar(float InFloat1, float InFloat2);
 
-public:
-	UFUNCTION()
-		void UpdateCompassVisibility();
+//public:
+//	UFUNCTION()
+//		void UpdateCompassVisibility();
 
 private:
 	UFUNCTION()

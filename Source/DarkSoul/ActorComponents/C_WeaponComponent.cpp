@@ -216,12 +216,15 @@ void UC_WeaponComponent::UpdateHUDProfile()
 
 	if (!!CurrentWeapon)
 	{
+		// #1. TextureInfo, FSkillAnimInfo
 		FWeaponTextureInfo WeaponTextureInfo = CurrentWeapon->GetWeaponTextureInfoStruct();
 		TArray<FSkillAnimInfo*>* SkillInfos = MAttackSkillStructs.Find(CurrentWeapon->GetWeaponType());
 
+		// #2-1. Delegate To HUD Comp : Weapon Image
 		OnUpdateHUDWeaponImage.ExecuteIfBound(
 			WeaponTextureInfo.WeaponImage ? WeaponTextureInfo.WeaponImage : BlankImage);
 
+		// #2-2. Delegate To HUD Comp : Skill Image
 		if (SkillInfos)
 		{
 			if (SkillInfos->Num() >= 3)

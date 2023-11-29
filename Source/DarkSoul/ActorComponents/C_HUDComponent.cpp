@@ -3,8 +3,6 @@
 
 #include "HUD/HUD_Profile.h"
 
-#include "GameObjects/PlayerCharacter.h"
-
 #include "ActorComponents/C_HealthComponent.h"
 #include "ActorComponents/C_ManaComponent.h"
 #include "ActorComponents/C_WeaponComponent.h"
@@ -19,47 +17,83 @@ void UC_HUDComponent::BeginPlay()
 {
 
 	Super::BeginPlay();
-	
-	AddProfileHUD();
 
 	AActor* OwnerActor = GetOwner();
-	APlayerCharacter* OwnerPlayer = Cast<APlayerCharacter>(OwnerActor);
 
-	UC_HealthComponent* HealthComp = OwnerActor->FindComponentByClass<UC_HealthComponent>();
-	UC_ManaComponent* ManaComp = OwnerActor->FindComponentByClass<UC_ManaComponent>();
-	UC_StaminaComponent* StaminaComp = OwnerActor->FindComponentByClass<UC_StaminaComponent>();
-	UC_WeaponComponent* WeaponComp = OwnerActor->FindComponentByClass<UC_WeaponComponent>();
+	if (OwnerActor)
+	{
+		// #1. Add HUD To User's ViewPort
+		AddProfileHUD();
 
-	CheckTrue(!OwnerActor || !OwnerPlayer || !HealthComp || !ManaComp || !StaminaComp || !WeaponComp);
+		// #2. Delegates
+		{
+			UC_HealthComponent* HealthComp = OwnerActor->FindComponentByClass<UC_HealthComponent>();
+			UC_ManaComponent* ManaComp = OwnerActor->FindComponentByClass<UC_ManaComponent>();
+			UC_StaminaComponent* StaminaComp = OwnerActor->FindComponentByClass<UC_StaminaComponent>();
+			UC_WeaponComponent* WeaponComp = OwnerActor->FindComponentByClass<UC_WeaponComponent>();
 	
-	HealthComp->OnUpdateHUDProfileHealthBar.BindUFunction(this, "UpdateHUDProfileHealthBar");
-	ManaComp->OnUpdateHUDProfileManaBar.BindUFunction(this, "UpdateHUDProfileManaBar");
-	ManaComp->OnUpdateHUDProfileSkillCoolTime.AddDynamic(this, &UC_HUDComponent::UpdateHUDProfileSkillCoolTime);
-	StaminaComp->OnUpdateHUDProfileStaminaBar.BindUFunction(this, "UpdateHUDProfileStaminaBar");
-	WeaponComp->OnUpdateHUDWeaponImage.BindUFunction(this, "UpdateHUDProfileWeaponImage");
-	WeaponComp->OnUpdateHUDSkillIcons.BindUFunction(this, "UpdateHUDProfileSkillIcons");
-	OwnerPlayer->OnShowCompassWidget.BindUFunction(this, "UpdateCompassVisibility");
+			// HP
+			if(HealthComp)
+			{
+				HealthComp->OnUpdateHUDProfileHealthBar.BindUFunction(this, "UpdateHUDProfileHealthBar");
+			}
+			// MP, CoolTime
+			if (ManaComp)
+			{
+				ManaComp->OnUpdateHUDProfileManaBar.BindUFunction(this, "UpdateHUDProfileManaBar");
+				ManaComp->OnUpdateHUDProfileSkillCoolTime.AddDynamic(this, &UC_HUDComponent::UpdateHUDProfileSkillCoolTime);
+			}
+			// SP
+			if (StaminaComp)
+			{
+				StaminaComp->OnUpdateHUDProfileStaminaBar.BindUFunction(this, "UpdateHUDProfileStaminaBar");
+			}
+			// Weapon Image, Skill Images
+			if (WeaponComp)
+			{
+				WeaponComp->OnUpdateHUDWeaponImage.BindUFunction(this, "UpdateHUDProfileWeaponImage");
+				WeaponComp->OnUpdateHUDSkillIcons.BindUFunction(this, "UpdateHUDProfileSkillIcons");
+			}
+			// [23-11-29] : Test, Radar
+			//OwnerPlayer->OnShowCompassWidget.BindUFunction(this, "UpdateCompassVisibility");
+		}
+	}
+	else
+	{
+		PrintLine();
+		return;
+	}
 
 }
 
 
 void UC_HUDComponent::AddProfileHUD()
 {
-	CheckNull(HUDProfileClass);
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	CheckNull(PlayerController);
 
-	HUDProfile = CreateWidget<UHUD_Profile>(PlayerController, HUDProfileClass);
+	if (PlayerController && HUDProfileClass)
+	{
+		HUDProfile = CreateWidget<UHUD_Profile>(PlayerController, HUDProfileClass);
+		if (HUDProfile)
+		{
+			HUDProfile->AddToViewport();
+		}
+	}
 
-	CheckNull(HUDProfile);
-	HUDProfile->AddToViewport();
 }
 
 void UC_HUDComponent::UpdateHUDProfileHealthBar(float InFloat1, float InFloat2)
 {
-	CheckNull(HUDProfile);
-	HUDProfile->SetHealthBar(InFloat1, InFloat2);
+	if (HUDProfile)
+	{
+		HUDProfile->SetHealthBar(InFloat1, InFloat2);
+	}
+	else
+	{
+		PrintLine();
+		return;
+	}
 }
 
 void UC_HUDComponent::UpdateHUDProfileManaBar(float InFloat1, float InFloat2)
@@ -74,11 +108,11 @@ void UC_HUDComponent::UpdateHUDProfileStaminaBar(float InFloat1, float InFloat2)
 	HUDProfile->SetStaminaBar(InFloat1, InFloat2);
 }
 
-void UC_HUDComponent::UpdateCompassVisibility()
-{
-	CheckNull(HUDProfile);
-	HUDProfile->SetRadarVisibility();
-}
+//void UC_HUDComponent::UpdateCompassVisibility()
+//{
+//	CheckNull(HUDProfile);
+//	HUDProfile->SetRadarVisibility();
+//}
 
 
 void UC_HUDComponent::UpdateHUDProfileWeaponImage(UTexture2D* InTexture)

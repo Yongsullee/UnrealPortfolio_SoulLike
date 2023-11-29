@@ -126,6 +126,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 		EComboType ComboType = EComboType::E_Max;
 
+	// [23-11-26] : HUD
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 		FWeaponTextureInfo WeaponTextureInfo;
 
@@ -161,6 +162,7 @@ protected:
 		bool bLastCombo = false;
 
 protected:
+	// [23-11-26] : Inventory
 	UPROPERTY(EditDefaultsOnly, Category = "Item")
 		FInventoryItemInfo ItemInfoStruct;
 
